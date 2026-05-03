@@ -1,21 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Project Title</title>
-   	   <link rel="stylesheet" href="styles.css" type=”text/css”/>
-        <link rel="icon" href="" type="image/x-icon" />
-        <script type="text/javascript" src="script.js"></script>
-    </head>
 
 
-    <body>
-        <!-- Add HTML markup elements for your web site below -->
-        <h1>Welcome to Project Title!</h1>
-        <p>Here are some more details.</p>
-    </body>
-    <footer>
-        <p>Made by: WIC &hearts;</p>
-    </footer>
+<head>
+    <title>TRITON PEER</title> <!-- the content here will only show in the tab and in the metadata about the page -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <link href="reset.css" rel="stylesheet" type="text/css" />
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+
+<body>
+    <!-- Navbar -->
+    <!-- Header Section -->
+    <header class="header-container">
+        <img src="your-image.jpg" alt="Header Image" class="header-item" /> <!-- Image -->
+        <h1 class="header-item">TRITON PEER</h1> <!-- First Text -->
+        <h3 class="header-item">Find a fellow Triton who aced your class — peer mentorship, made easy.</h3> <!-- Second Text -->
+        <button class="header-item" type="button">oooh this is a button</button> <!-- First Button -->
+        <button class="header-item" type="button">another button!</button> <!-- Second Button -->
+    </header>
+    <!-- other content -->
+    <!-- CONNECT WITH US FORM -->
+    <div id="connect">
+    <h2>Connect with Us</h2>
+    <div class="connect-container">
+        <div class="connect-para">
+            <p>Want to hear from us? Fill out the form below to share your name and email!</p>
+        </div>
+        <div class="connect-participants">
+            <p>🎟️ DJ from Texas has connected.</p>
+            <p>🎟️ Amy from New York has connected.</p>
+            <p>🎟️ Teresa from Montana has connected.</p>
+        </div>
+    </div>
+
+
+    <!-- Connect Form -->
+    <div class="form-container">
+        <form
+            id="connect-form"
+            title="connect-form"
+            action="https://formspree.io/f/yourFormID"
+            method="POST"
+        >
+
+
+            <!-- Name Input -->
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+
+
+            <!-- Email Input -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+
+
+            <!-- Formspree note -->
+            <p style="font-size: 0.9em; color: gray;">
+                To actually collect responses, connect your form with
+                <a href="https://formspree.io/" target="_blank">Formspree</a>.
+            </p>
+
+
+            <!-- Submit button -->
+            <button id="connect-button" type="submit">Submit</button>
+        </form>
+    </div>      
+</div>
+</body>
+
+
 </html>
