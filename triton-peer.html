@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triton Peer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --pink:   #FF6EB4;
+  --yellow: #FFD53E;
+  --ocean:  #00B4D8;
+  --deep:   #0077B6;
+  --deeper: #023E8A;
+  --teal:   #48CAE4;
+  --foam:   #E0F7FF;
+  --white:  #FFFFFF;
+  --ink:    #0A2540;
+  --muted:  #4A7FA5;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--foam);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--deeper);
+  padding: 0 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 62px;
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.nav-logo-text {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 24px; font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+.nav-logo-text span { color: var(--yellow); }
+
+.nav-links { display: flex; align-items: center; gap: 6px; }
+.nav-links a {
+  color: rgba(255,255,255,0.75); text-decoration: none;
+  font-size: 15px; font-weight: 500;
+  padding: 7px 14px; border-radius: 20px;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-links a:hover { color: var(--white); background: rgba(255,255,255,0.1); }
+.nav-btn {
+  background: var(--yellow) !important;
+  color: var(--deeper) !important;
+  font-weight: 700 !important;
+  border-radius: 20px !important;
+}
+.nav-btn:hover { background: #ffe066 !important; }
+
+/* ── WAVES ── */
+.wave-divider { display: block; width: 100%; margin-bottom: -2px; }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(160deg, var(--deeper) 0%, var(--deep) 50%, var(--ocean) 100%);
+  padding: 70px 2rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 10% 60%, rgba(255,110,180,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 30%, rgba(255,213,62,0.15) 0%, transparent 50%);
+}
+
+/* Floating bubbles */
+.bubbles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.bubble {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  animation: rise linear infinite;
+}
+@keyframes rise {
+  0%   { transform: translateY(100%) scale(0.8); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(-120%) scale(1.1); opacity: 0; }
+}
+
+.hero-inner { position: relative; max-width: 780px; margin: 0 auto; }
+
+/* Mascot */
+.mascot-wrap {
+  margin-bottom: 20px;
+  animation: float 3s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+/* Hero text — bold italic heavy like the UCSD banner */
+.hero-welcome {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(14px, 2.5vw, 18px);
+  color: rgba(255,255,255,0.8);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.hero-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(52px, 10vw, 96px);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  text-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+.hero-title .accent { color: var(--yellow); }
+.hero-title .accent2 { color: var(--pink); }
+
+.hero-sub {
+  font-size: clamp(15px, 2vw, 18px);
+  color: rgba(255,255,255,0.75);
+  max-width: 480px; margin: 0 auto 36px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+/* ── SEARCH BOX (hero) ── */
+.hero-search {
+  display: flex; gap: 0;
+  max-width: 560px; margin: 0 auto 52px;
+  background: var(--white);
+  border-radius: 50px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+.hero-search input {
+  flex: 1; border: none; outline: none;
+  padding: 16px 22px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 500;
+  color: var(--ink);
+  background: transparent;
+}
+.hero-search input::placeholder { color: #aac; }
+.hero-search button {
+  background: var(--yellow);
+  border: none; cursor: pointer;
+  padding: 14px 28px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 17px; font-weight: 600;
+  color: var(--deeper);
+  border-radius: 0 50px 50px 0;
+  transition: background 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.hero-search button:hover { background: #ffe066; transform: scale(1.02); }
+
+/* ── HOW IT WORKS ── */
+.section { padding: 72px 2rem; max-width: 1080px; margin: 0 auto; }
+.section-label {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 13px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ocean);
+  margin-bottom: 8px;
+}
+.section-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(30px, 4vw, 46px);
+  font-weight: 700; color: var(--deeper);
+  margin-bottom: 48px; line-height: 1.1;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 20px;
+}
+.step {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 28px 24px;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+  position: relative; overflow: hidden;
+}
+.step::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+}
+.step:nth-child(1)::before { background: var(--pink); }
+.step:nth-child(2)::before { background: var(--yellow); }
+.step:nth-child(3)::before { background: var(--ocean); }
+.step:nth-child(4)::before { background: var(--teal); }
+.step:hover { border-color: var(--teal); transform: translateY(-4px); }
+.step-icon { font-size: 36px; margin-bottom: 14px; }
+.step h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 20px; font-weight: 600;
+  color: var(--deeper); margin-bottom: 8px;
+}
+.step p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* ── CATEGORIES ── */
+.ocean-bg {
+  background: linear-gradient(180deg, var(--foam) 0%, #caf0f8 100%);
+  padding: 0 0 72px;
+}
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+}
+.cat-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 22px 16px;
+  text-align: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+.cat-card:hover { border-color: var(--ocean); transform: translateY(-3px); }
+.cat-icon { font-size: 30px; margin-bottom: 10px; }
+.cat-name {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px; font-weight: 600;
+  color: var(--deeper);
+}
+
+/* ── CTA BAND ── */
+.cta-band {
+  background: linear-gradient(135deg, var(--deeper) 0%, var(--deep) 100%);
+  padding: 80px 2rem;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-band::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(255,110,180,0.15) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 50%, rgba(255,213,62,0.12) 0%, transparent 60%);
+}
+.cta-band h2 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(28px, 5vw, 50px);
+  font-weight: 700; color: var(--white);
+  margin-bottom: 12px; position: relative;
+}
+.cta-band p { color: rgba(255,255,255,0.7); font-size: 16px; margin-bottom: 32px; position: relative; }
+.cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; }
+.btn-yellow {
+  background: var(--yellow); color: var(--deeper);
+  font-family: 'Fredoka', sans-serif; font-size: 18px; font-weight: 700;
+  padding: 14px 34px; border-radius: 50px; border: none; cursor: pointer;
+  transition: background 0.2s, transform 0.15s; text-decoration: none; display: inline-block;
+}
+.btn-yellow:hover { background: #ffe066; transform: translateY(-2px); }
+.btn-ghost {
+  background: transparent; color: var(--white);
+  font-family: 'Fredoka', sans-serif; font-size: 18px; font-weight: 600;
+  padding: 13px 34px; border-radius: 50px;
+  border: 2px solid rgba(255,255,255,0.35); cursor: pointer;
+  transition: all 0.2s; text-decoration: none; display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--white); background: rgba(255,255,255,0.08); }
+
+footer {
+  background: var(--deeper);
+  padding: 28px 2rem;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+  color: rgba(255,255,255,0.45); font-size: 13px;
+}
+footer a { color: rgba(255,255,255,0.45); text-decoration: none; }
+footer a:hover { color: rgba(255,255,255,0.8); }
+
+/* ══════════════════ SEARCH PAGE ══════════════════ */
+.search-hero {
+  background: linear-gradient(160deg, var(--deeper) 0%, var(--deep) 100%);
+  padding: 48px 2rem 56px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.search-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(255,213,62,0.12) 0%, transparent 60%);
+}
+.search-hero h1 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: clamp(32px, 5vw, 54px);
+  font-weight: 700; color: var(--white);
+  margin-bottom: 8px; position: relative;
+}
+.search-hero p {
+  color: rgba(255,255,255,0.7); font-size: 16px;
+  margin-bottom: 28px; position: relative;
+}
+
+.search-bar-lg {
+  display: flex; gap: 0; max-width: 640px;
+  margin: 0 auto; background: var(--white);
+  border-radius: 50px; overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.search-bar-lg input {
+  flex: 1; border: none; outline: none;
+  padding: 16px 22px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 500; color: var(--ink);
+}
+.search-bar-lg input::placeholder { color: #aac; }
+.search-bar-lg button {
+  background: var(--yellow); border: none; cursor: pointer;
+  padding: 14px 28px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 17px; font-weight: 700; color: var(--deeper);
+  border-radius: 0 50px 50px 0;
+  transition: background 0.2s;
+}
+.search-bar-lg button:hover { background: #ffe066; }
+
+.search-filters {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 18px;
+  position: relative;
+}
+.filter-chip {
+  background: rgba(255,255,255,0.15); color: var(--white);
+  font-size: 13px; font-weight: 500; font-family: 'Nunito', sans-serif;
+  padding: 6px 16px; border-radius: 20px;
+  cursor: pointer; border: 1.5px solid rgba(255,255,255,0.2);
+  transition: all 0.15s;
+}
+.filter-chip:hover, .filter-chip.active { background: var(--yellow); color: var(--deeper); border-color: var(--yellow); }
+
+.results-area { max-width: 1080px; margin: 0 auto; padding: 40px 2rem 64px; }
+.results-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.results-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 22px; font-weight: 600; color: var(--deeper);
+}
+.results-count { font-size: 14px; color: var(--muted); }
+
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+
+.class-card {
+  background: var(--white);
+  border-radius: 18px;
+  padding: 22px;
+  border: 2px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+.class-card:hover { border-color: var(--ocean); transform: translateY(-3px); }
+.class-tag {
+  display: inline-block;
+  font-size: 11px; font-weight: 700; font-family: 'Fredoka', sans-serif;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 3px 12px; border-radius: 20px;
+  margin-bottom: 12px;
+}
+.tag-cse   { background: #E6F1FB; color: #185FA5; }
+.tag-math  { background: #E1F5EE; color: #0F6E56; }
+.tag-bio   { background: #FBEAF0; color: #993556; }
+.tag-phys  { background: #FAEEDA; color: #854F0B; }
+.tag-econ  { background: #EEEDFE; color: #534AB7; }
+.tag-chem  { background: #E1F5EE; color: #085041; }
+
+.class-code {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 22px; font-weight: 700; color: var(--deeper);
+  margin-bottom: 3px;
+}
+.class-name { font-size: 14px; color: var(--muted); margin-bottom: 14px; font-weight: 500; }
+.class-mentors {
+  display: flex; align-items: center; gap: 10px;
+}
+.mentor-avatars { display: flex; }
+.mentor-av {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; margin-left: -8px;
+}
+.mentor-av:first-child { margin-left: 0; }
+.class-mentor-text { font-size: 13px; color: var(--muted); }
+.class-btn {
+  margin-top: 14px; width: 100%;
+  background: var(--foam); color: var(--deep);
+  font-family: 'Fredoka', sans-serif; font-size: 15px; font-weight: 600;
+  padding: 10px; border-radius: 50px; border: 2px solid var(--teal);
+  cursor: pointer; transition: all 0.15s;
+}
+.class-btn:hover { background: var(--ocean); color: var(--white); border-color: var(--ocean); }
+
+.empty-state {
+  text-align: center; padding: 64px 0;
+  display: none;
+}
+.empty-state.show { display: block; }
+.empty-icon { font-size: 52px; margin-bottom: 16px; }
+.empty-state h3 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 24px; color: var(--deeper); margin-bottom: 8px;
+}
+.empty-state p { color: var(--muted); font-size: 15px; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-inner > * { animation: fadeUp 0.6s ease both; }
+.hero-inner > *:nth-child(1) { animation-delay: 0.05s; }
+.hero-inner > *:nth-child(2) { animation-delay: 0.12s; }
+.hero-inner > *:nth-child(3) { animation-delay: 0.2s; }
+.hero-inner > *:nth-child(4) { animation-delay: 0.28s; }
+.hero-inner > *:nth-child(5) { animation-delay: 0.36s; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <!-- inline cute triton SVG, no border -->
+    <svg width="38" height="38" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- body -->
+      <ellipse cx="40" cy="46" rx="20" ry="22" fill="#FFD53E"/>
+      <!-- head -->
+      <circle cx="40" cy="26" r="16" fill="#FFD53E"/>
+      <!-- crown base -->
+      <rect x="26" y="12" width="28" height="8" rx="4" fill="#00B4D8"/>
+      <!-- crown spikes -->
+      <polygon points="26,12 30,4 34,12" fill="#00B4D8"/>
+      <polygon points="36,12 40,3 44,12" fill="#00B4D8"/>
+      <polygon points="46,12 50,4 54,12" fill="#00B4D8"/>
+      <!-- eyes -->
+      <circle cx="33" cy="27" r="3.5" fill="#023E8A"/>
+      <circle cx="47" cy="27" r="3.5" fill="#023E8A"/>
+      <circle cx="34.2" cy="25.8" r="1.2" fill="white"/>
+      <circle cx="48.2" cy="25.8" r="1.2" fill="white"/>
+      <!-- smile -->
+      <path d="M34 33 Q40 38 46 33" stroke="#023E8A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      <!-- cheeks -->
+      <ellipse cx="29" cy="32" rx="4" ry="2.5" fill="#FF6EB4" opacity="0.5"/>
+      <ellipse cx="51" cy="32" rx="4" ry="2.5" fill="#FF6EB4" opacity="0.5"/>
+      <!-- tail fin -->
+      <path d="M26 62 Q20 72 14 68 Q22 60 26 62Z" fill="#00B4D8"/>
+      <path d="M54 62 Q60 72 66 68 Q58 60 54 62Z" fill="#00B4D8"/>
+      <ellipse cx="40" cy="62" rx="14" ry="8" fill="#00B4D8"/>
+      <!-- trident -->
+      <rect x="58" y="30" width="4" height="28" rx="2" fill="#FF6EB4"/>
+      <rect x="54" y="28" width="4" height="10" rx="2" fill="#FF6EB4"/>
+      <rect x="62" y="28" width="4" height="10" rx="2" fill="#FF6EB4"/>
+      <rect x="56" y="24" width="2" height="6" rx="1" fill="#FF6EB4"/>
+      <rect x="64" y="24" width="2" height="6" rx="1" fill="#FF6EB4"/>
+      <rect x="60" y="22" width="2" height="8" rx="1" fill="#FF6EB4"/>
+    </svg>
+    <span class="nav-logo-text">Triton <span>Peer</span></span>
+  </div>
+  <div class="nav-links">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#how">How it works</a>
+    <a href="#" class="nav-btn" onclick="showPage('search'); return false;">Find a mentor</a>
+  </div>
+</nav>
+
+<!-- ═══════════════ HOME PAGE ═══════════════ -->
+<div id="home" class="page active">
+
+  <section class="hero">
+    <div class="bubbles" id="bubbles"></div>
+    <div class="hero-inner">
+      <div class="mascot-wrap">
+        <svg width="110" height="110" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="40" cy="46" rx="20" ry="22" fill="#FFD53E"/>
+          <circle cx="40" cy="26" r="16" fill="#FFD53E"/>
+          <rect x="26" y="12" width="28" height="8" rx="4" fill="#00B4D8"/>
+          <polygon points="26,12 30,4 34,12" fill="#00B4D8"/>
+          <polygon points="36,12 40,3 44,12" fill="#00B4D8"/>
+          <polygon points="46,12 50,4 54,12" fill="#00B4D8"/>
+          <circle cx="33" cy="27" r="3.5" fill="#023E8A"/>
+          <circle cx="47" cy="27" r="3.5" fill="#023E8A"/>
+          <circle cx="34.2" cy="25.8" r="1.2" fill="white"/>
+          <circle cx="48.2" cy="25.8" r="1.2" fill="white"/>
+          <path d="M34 33 Q40 38 46 33" stroke="#023E8A" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <ellipse cx="29" cy="32" rx="4" ry="2.5" fill="#FF6EB4" opacity="0.5"/>
+          <ellipse cx="51" cy="32" rx="4" ry="2.5" fill="#FF6EB4" opacity="0.5"/>
+          <path d="M26 62 Q20 72 14 68 Q22 60 26 62Z" fill="#00B4D8"/>
+          <path d="M54 62 Q60 72 66 68 Q58 60 54 62Z" fill="#00B4D8"/>
+          <ellipse cx="40" cy="62" rx="14" ry="8" fill="#00B4D8"/>
+          <rect x="58" y="30" width="4" height="28" rx="2" fill="#FF6EB4"/>
+          <rect x="54" y="28" width="4" height="10" rx="2" fill="#FF6EB4"/>
+          <rect x="62" y="28" width="4" height="10" rx="2" fill="#FF6EB4"/>
+          <rect x="56" y="24" width="2" height="6" rx="1" fill="#FF6EB4"/>
+          <rect x="64" y="24" width="2" height="6" rx="1" fill="#FF6EB4"/>
+          <rect x="60" y="22" width="2" height="8" rx="1" fill="#FF6EB4"/>
+        </svg>
+      </div>
+      <p class="hero-welcome">Welcome to</p>
+      <h1 class="hero-title"><span class="accent">TRITON</span><br><span class="accent2">PEER</span></h1>
+      <p class="hero-sub">Find a fellow Triton who's already aced the class you're in — peer mentorship, made easy.</p>
+      <div class="hero-search">
+        <input type="text" placeholder="Search a class — e.g. CSE 11, MATH 20A..." id="hero-input" oninput="liveSearch(this.value)"/>
+        <button onclick="goSearch()">Find mentors</button>
+      </div>
+    </div>
+    <!-- wave -->
+    <svg class="wave-divider" viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="#E0F7FF"/>
+    </svg>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <div style="background: var(--foam);">
+    <section id="how" class="section">
+      <p class="section-label">The process</p>
+      <h2 class="section-title">How Triton Peer works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-icon">🔍</div>
+          <h3>Search your class</h3>
+          <p>Type in any UCSD course code or name to find available peer mentors for that class.</p>
+        </div>
+        <div class="step">
+          <div class="step-icon">🤝</div>
+          <h3>Browse mentors</h3>
+          <p>See mentors who've taken the course, read about their experience, and pick your match.</p>
+        </div>
+        <div class="step">
+          <div class="step-icon">📅</div>
+          <h3>Schedule a session</h3>
+          <p>Pick a time that works, meet on Zoom or in person on campus, and get the help you need.</p>
+        </div>
+        <div class="step">
+          <div class="step-icon">🌊</div>
+          <h3>Ride the wave</h3>
+          <p>Ace your class — and one day, come back and be a mentor for the next Triton who needs you.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- BROWSE BY SUBJECT -->
+  <div class="ocean-bg">
+    <svg viewBox="0 0 1440 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;margin-bottom:-2px;">
+      <path d="M0,25 C360,50 1080,0 1440,25 L1440,0 L0,0 Z" fill="var(--foam)"/>
+    </svg>
+    <section class="section" style="padding-top: 48px;">
+      <p class="section-label">Browse by subject</p>
+      <h2 class="section-title">What are you studying?</h2>
+      <div class="cat-grid">
+        <div class="cat-card" onclick="filterSearch('CSE')">
+          <div class="cat-icon">💻</div>
+          <div class="cat-name">Computer Science</div>
+        </div>
+        <div class="cat-card" onclick="filterSearch('MATH')">
+          <div class="cat-icon">📐</div>
+          <div class="cat-name">Mathematics</div>
+        </div>
+        <div class="cat-card" onclick="filterSearch('BIOL')">
+          <div class="cat-icon">🧬</div>
+          <div class="cat-name">Biology</div>
+        </div>
+        <div class="cat-card" onclick="filterSearch('PHYS')">
+          <div class="cat-icon">⚛️</div>
+          <div class="cat-name">Physics</div>
+        </div>
+        <div class="cat-card" onclick="filterSearch('CHEM')">
+          <div class="cat-icon">🧪</div>
+          <div class="cat-name">Chemistry</div>
+        </div>
+        <div class="cat-card" onclick="filterSearch('ECON')">
+          <div class="cat-icon">📊</div>
+          <div class="cat-name">Economics</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-band">
+    <h2>Ready to dive in? 🌊</h2>
+    <p>Search for your class and find a peer mentor in minutes.</p>
+    <div class="cta-btns">
+      <a href="#" class="btn-yellow" onclick="showPage('search'); return false;">Find a mentor</a>
+      <a href="#" class="btn-ghost" onclick="showPage('search'); return false;">Become a mentor</a>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2025 Triton Peer · UC San Diego</span>
+    <span><a href="#">About</a> &nbsp;·&nbsp; <a href="#">Contact</a> &nbsp;·&nbsp; <a href="#">UCSD</a></span>
+  </footer>
+</div>
+
+<!-- ═══════════════ SEARCH PAGE ═══════════════ -->
+<div id="search" class="page">
+  <div class="search-hero">
+    <h1>Find your class mentor 🔍</h1>
+    <p>Search any UCSD course — we'll match you with a peer who's been there.</p>
+    <div class="search-bar-lg">
+      <input type="text" id="search-input" placeholder="e.g. CSE 11, MATH 20A, BIOL 101..." oninput="runSearch(this.value)"/>
+      <button onclick="runSearch(document.getElementById('search-input').value)">Search</button>
+    </div>
+    <div class="search-filters">
+      <span class="filter-chip active" onclick="setFilter(this,'ALL')">All subjects</span>
+      <span class="filter-chip" onclick="setFilter(this,'CSE')">CSE</span>
+      <span class="filter-chip" onclick="setFilter(this,'MATH')">Math</span>
+      <span class="filter-chip" onclick="setFilter(this,'BIOL')">Biology</span>
+      <span class="filter-chip" onclick="setFilter(this,'PHYS')">Physics</span>
+      <span class="filter-chip" onclick="setFilter(this,'CHEM')">Chemistry</span>
+      <span class="filter-chip" onclick="setFilter(this,'ECON')">Economics</span>
+    </div>
+  </div>
+
+  <div class="results-area">
+    <div class="results-header">
+      <span class="results-title" id="results-title">All courses</span>
+      <span class="results-count" id="results-count"></span>
+    </div>
+    <div class="class-grid" id="class-grid"></div>
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">🐠</div>
+      <h3>No classes found</h3>
+      <p>Try a different course code or name — like "CSE 12" or "Calculus"</p>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2025 Triton Peer · UC San Diego</span>
+    <span><a href="#">About</a> &nbsp;·&nbsp; <a href="#">Contact</a></span>
+  </footer>
+</div>
+
+<script>
+const CLASSES = [
+  { code:'CSE 11', name:'Introduction to Programming & Computational Problem Solving', dept:'CSE', mentors:[{i:'JL',bg:'#E6F1FB',c:'#185FA5'},{i:'MR',bg:'#E1F5EE',c:'#0F6E56'},{i:'AP',bg:'#FBEAF0',c:'#993556'}], n:3 },
+  { code:'CSE 12', name:'Basic Data Structures & Object-Oriented Design', dept:'CSE', mentors:[{i:'KW',bg:'#EEEDFE',c:'#534AB7'},{i:'DL',bg:'#E6F1FB',c:'#185FA5'}], n:2 },
+  { code:'CSE 100', name:'Advanced Data Structures', dept:'CSE', mentors:[{i:'TN',bg:'#FAEEDA',c:'#854F0B'},{i:'SR',bg:'#FBEAF0',c:'#993556'},{i:'JC',bg:'#E1F5EE',c:'#0F6E56'}], n:4 },
+  { code:'CSE 101', name:'Design & Analysis of Algorithms', dept:'CSE', mentors:[{i:'BH',bg:'#E6F1FB',c:'#185FA5'}], n:1 },
+  { code:'CSE 110', name:'Software Engineering', dept:'CSE', mentors:[{i:'LM',bg:'#EEEDFE',c:'#534AB7'},{i:'OC',bg:'#E1F5EE',c:'#085041'}], n:2 },
+  { code:'MATH 20A', name:'Calculus for Science and Engineering I', dept:'MATH', mentors:[{i:'YP',bg:'#E1F5EE',c:'#0F6E56'},{i:'AK',bg:'#FAEEDA',c:'#854F0B'},{i:'NB',bg:'#E6F1FB',c:'#185FA5'}], n:5 },
+  { code:'MATH 20B', name:'Calculus for Science and Engineering II', dept:'MATH', mentors:[{i:'YP',bg:'#E1F5EE',c:'#0F6E56'},{i:'CG',bg:'#EEEDFE',c:'#534AB7'}], n:2 },
+  { code:'MATH 20C', name:'Calculus and Analytic Geometry for Science & Engineering', dept:'MATH', mentors:[{i:'RW',bg:'#FBEAF0',c:'#993556'},{i:'AK',bg:'#FAEEDA',c:'#854F0B'}], n:3 },
+  { code:'MATH 18', name:'Linear Algebra', dept:'MATH', mentors:[{i:'NB',bg:'#E6F1FB',c:'#185FA5'},{i:'EJ',bg:'#E1F5EE',c:'#085041'},{i:'SM',bg:'#FAEEDA',c:'#854F0B'}], n:4 },
+  { code:'BIOL 101', name:'Cell Biology', dept:'BIOL', mentors:[{i:'HK',bg:'#FBEAF0',c:'#993556'},{i:'TL',bg:'#E1F5EE',c:'#0F6E56'}], n:2 },
+  { code:'BIOL 202', name:'Genetics', dept:'BIOL', mentors:[{i:'VN',bg:'#EEEDFE',c:'#534AB7'}], n:1 },
+  { code:'PHYS 2A', name:'Physics — Mechanics', dept:'PHYS', mentors:[{i:'PR',bg:'#FAEEDA',c:'#854F0B'},{i:'GO',bg:'#E6F1FB',c:'#185FA5'}], n:2 },
+  { code:'PHYS 2B', name:'Physics — Electricity & Magnetism', dept:'PHYS', mentors:[{i:'GO',bg:'#E6F1FB',c:'#185FA5'},{i:'IZ',bg:'#FBEAF0',c:'#993556'},{i:'MK',bg:'#E1F5EE',c:'#085041'}], n:3 },
+  { code:'CHEM 6A', name:'General Chemistry I', dept:'CHEM', mentors:[{i:'FP',bg:'#E1F5EE',c:'#0F6E56'},{i:'CR',bg:'#FAEEDA',c:'#854F0B'}], n:2 },
+  { code:'CHEM 6B', name:'General Chemistry II', dept:'CHEM', mentors:[{i:'WY',bg:'#EEEDFE',c:'#534AB7'}], n:1 },
+  { code:'ECON 1', name:'Principles of Microeconomics', dept:'ECON', mentors:[{i:'DM',bg:'#E6F1FB',c:'#185FA5'},{i:'KA',bg:'#FBEAF0',c:'#993556'}], n:2 },
+  { code:'ECON 2', name:'Principles of Macroeconomics', dept:'ECON', mentors:[{i:'BN',bg:'#FAEEDA',c:'#854F0B'},{i:'ST',bg:'#E1F5EE',c:'#0F6E56'},{i:'VL',bg:'#EEEDFE',c:'#534AB7'}], n:3 },
+];
+
+const tagClass = { CSE:'tag-cse', MATH:'tag-math', BIOL:'tag-bio', PHYS:'tag-phys', ECON:'tag-econ', CHEM:'tag-chem' };
+
+let activeFilter = 'ALL';
+let searchQuery = '';
+
+function renderCards(list) {
+  const grid = document.getElementById('class-grid');
+  const empty = document.getElementById('empty-state');
+  const count = document.getElementById('results-count');
+  if (!list.length) {
+    grid.innerHTML = '';
+    empty.classList.add('show');
+    count.textContent = '';
+    return;
+  }
+  empty.classList.remove('show');
+  count.textContent = list.length + ' course' + (list.length !== 1 ? 's' : '') + ' found';
+  grid.innerHTML = list.map(c => {
+    const avs = c.mentors.slice(0,3).map(m =>
+      `<div class="mentor-av" style="background:${m.bg};color:${m.c};">${m.i}</div>`
+    ).join('');
+    const extra = c.n > 3 ? `<span style="font-size:12px;color:var(--muted);margin-left:4px;">+${c.n-3} more</span>` : '';
+    return `<div class="class-card">
+      <span class="class-tag ${tagClass[c.dept]||'tag-cse'}">${c.dept}</span>
+      <div class="class-code">${c.code}</div>
+      <div class="class-name">${c.name}</div>
+      <div class="class-mentors">
+        <div class="mentor-avatars">${avs}</div>
+        <span class="class-mentor-text">${c.n} mentor${c.n!==1?'s':''} available</span>
+        ${extra}
+      </div>
+      <button class="class-btn" onclick="alert('Mentor profiles for ${c.code} coming soon!')">View mentors</button>
+    </div>`;
+  }).join('');
+}
+
+function filtered() {
+  return CLASSES.filter(c => {
+    const matchesDept = activeFilter === 'ALL' || c.dept === activeFilter;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesQ = !q || c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q) || c.dept.toLowerCase().includes(q);
+    return matchesDept && matchesQ;
+  });
+}
+
+function runSearch(val) {
+  searchQuery = val;
+  const title = document.getElementById('results-title');
+  title.textContent = val.trim() ? `Results for "${val.trim()}"` : (activeFilter === 'ALL' ? 'All courses' : activeFilter + ' courses');
+  renderCards(filtered());
+}
+
+function setFilter(el, dept) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter = dept;
+  const title = document.getElementById('results-title');
+  const q = document.getElementById('search-input').value.trim();
+  title.textContent = q ? `Results for "${q}"` : (dept === 'ALL' ? 'All courses' : dept + ' courses');
+  renderCards(filtered());
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'search') {
+    renderCards(filtered());
+  }
+}
+
+function goSearch() {
+  const val = document.getElementById('hero-input').value;
+  searchQuery = val;
+  document.getElementById('search-input').value = val;
+  showPage('search');
+  runSearch(val);
+}
+
+function liveSearch(val) {
+  searchQuery = val;
+}
+
+function filterSearch(dept) {
+  activeFilter = dept;
+  showPage('search');
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    c.classList.toggle('active', c.textContent.trim() === dept || (dept === 'ALL' && c.textContent.trim() === 'All subjects'));
+  });
+  renderCards(filtered());
+}
+
+// Bubbles
+const bc = document.getElementById('bubbles');
+if (bc) {
+  for (let i = 0; i < 16; i++) {
+    const b = document.createElement('div');
+    b.className = 'bubble';
+    const sz = 8 + Math.random() * 28;
+    b.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;bottom:-${sz}px;animation-duration:${6+Math.random()*10}s;animation-delay:${Math.random()*8}s;`;
+    bc.appendChild(b);
+  }
+}
+</script>
+</body>
+</html>
